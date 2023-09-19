@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "crypto-coral-399213",
+  "private_key_id": "8170626b8fe13d2a45d661d296e6af71e2665e53",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCTCWkoBHKAbXjB\nFDv1pBMnUA3rtyoaIpzuBjVi0iZHzRSX0xBa/3++26HNiwpqNuqYDwZxqOcfiAYA\n2UIdhkgn/XPqMKIIvEN61exqRAAaSbOo/drc2d2zhUdjfaHlOYW22MsRElvJovm+\noV8h9qdl6r4mohDRVlXosdliZo9sRBl9pkjbI3cSFdRRmEkMIZz61BsvcrMOWTCa\nHBgWlsbwz7/OfO+tEq9vUccB4XINbTFFZHR9N4UYQ/YLpO83LQR/NyNDVJMVzuS2\nb4vtnuYmc3HRE35o4Q+tUu4Rbg0K4Wq1e+gzN61ZYgQFoIq/mPm60xr4Uk5ccyrZ\ngvvl+0BhAgMBAAECggEAGwxoI8xto+J/jEVEonOEcn7vkKUpQZWMeNz7hSpTkHHR\nj/xrzdGilmGg6kbhq5hen4pkDRSdL9e+Avn0h6nkLDcb08EOjbzUTQx9aS8JNczJ\nGBVa5bXOau/hqhO6bIigaHqJIKLX78fjWYYmEgFl2gHM6R53KYtQUnYlH0zupWO6\nSZpUQv8uTIjki3eEp2MDFT571aWawBBeS7X7nVy2oAcvDZVGeBHW0HDcmiBX+J75\n/KGbo8d9bm663ufeAm2Ihb52HklOEzPOMEyzZsKpMB2B64uAUJYeDuscOnq1/gpi\n23nBoSC3v2TGTLjk7CNtlYgXJ2lVADhSJG3fPSV8gQKBgQDEdt22G5GMgqhCYTrn\nIYGTgh/jCD6tkJhVSqnimC2z1O0p40AJuuUgXD2z3ZlaxbdjMwZI7d97hHchu6Qg\nWxSq5XbMoAK7jkSU47aeyEo4d9dkEtdHFnmIKlmFGVRU5s/jmMHlATSekTpGLDKg\nXIbgOWZocdryuWHJ6DeFe6gufQKBgQC/mBj4DMod9AKyStJA0Hi+YbzcKeQAnUie\n6yExhAJi2VdO+vG6WEQBhWkTFAnfXwFX7smx0NlJJ4CHPW3DQnQwa+gtQf6C1ibn\n8Wh/VXI806t4D9RXV10yIMMnR3RAiKAz611+H3Ii/pa33zjhRt07dcCvemUWdyCd\n/w3j63+KtQKBgDAjV+vZEW62TPgGzuH3KcK07Y85Y/IvLcQoSTwGQZyAnaPX1McN\njjrBnzTFJWBCdc7On8maz1l6eZ5AVdS/vG6rTtKQmlrOXyuEKCj7toPjiVkx7KG0\ndg7RIaIlNK6g52tC8K9l/jikKP0sszLruPiT1+3bh+RVXAqW5ZPFWs4ZAoGAGYHR\nSSzCt8wlk8D8Tt6yRH5Um2cEUMSfx3B8QdBWVPykcAJerjVUEHPHcl/HlLJcRm2m\n8oJgeynEJb0a4NT3DP9AsM3JaXfDRDvScqlYhRqVCG3rEhmycZsFADS2GGVYFrFu\nB/19v4TvYdlZBDzf9SuPFI2R6bTAZehv2/kdSMUCgYB2m/4HTXWRwCIxUH2lIhNw\nBp6CXcDMbUmRoAKiXtx3JTzrEQFY/cBRm4THHBI/HWVuQdurFl2fmGTVUfIl6V73\n6Yk76aJVZ08mC6HM7Tg3BHUW8AAdE15pYxhGh3UYOlrudkn0V9lxqQNGebpNvTVk\n0jFohGSBOBB+gI305q0J6w==\n-----END PRIVATE KEY-----\n",
+  "client_email": "speech-recognition@crypto-coral-399213.iam.gserviceaccount.com",
+  "client_id": "110851637008705631470",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/speech-recognition%40crypto-coral-399213.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
