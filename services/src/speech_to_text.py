@@ -1,17 +1,12 @@
-# import necessary libraries
-import openai          # import the OpenAI library for API access
-from dotenv import dotenv_values   # import the dotenv library for loading environment variables
+# class for speech-to-text conversion
+class SpeechToText:
+    def __init__(self, openai, model: str = "whisper-1"):
+        self.__model = model
+        self.__openai = openai
 
-# load API key from the .env file
-config = dotenv_values(".env")   # load environment variables from the .env file
-
-# set the OpenAI API key using the loaded value
-openai.api_key = config["OPENAI_API_KEY"]
-
-# open the audio file for transcription in binary read mode
-with open("assets/audio/HumidityCurrent.wav", "rb") as f:
-    # transcribe the audio using the OpenAI GPT-3.5 Whisper model
-    transcript = openai.Audio.transcribe("whisper-1", f)
-
-    # print the transcription result
-    print(transcript)
+    # method to transcribe audio file to text
+    def transcribe(self, file_path: str):
+        with open(file_path, "rb") as f:
+            transcript = self.__openai.Audio.transcribe(self.__model, f)
+            text = transcript["text"]
+        return text

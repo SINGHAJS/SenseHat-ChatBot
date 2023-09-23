@@ -1,31 +1,22 @@
-# import necessary libraries
-import openai
-from dotenv import dotenv_values
-
-# load API key from the .env file
-config = dotenv_values(".env")
-
-# define a ChatCompletion class for handling OpenAI Chat models
+# class for chat-based completion
 class ChatCompletion:
-    def __init__(self, openai_api_key: str, model: str = "gpt-3.5-turbo"):
-        self.openai_api_key = openai_api_key
+    def __init__(self, openai, model: str = "gpt-3.5-turbo"):
         self.__model = model
-        openai.api_key = openai_api_key
+        self.__openai = openai
 
-    # method for obtaining a chat-based response from the OpenAI model
-    def get_answer(self):
-        response = openai.ChatCompletion.create(
+    # method to obtain an answer based on a question and premises
+    def get_answer(self, question: str, premises: list, randomness=0):
+        
+        # Create messages with system and user roles
+        messages = [{"role": "system", "content": p} for p in premises]
+        messages.append({"role": "user", "content": question})
+        
+        # Generate a response using the specified model and messages
+        response = self.__openai.ChatCompletion.create(
             model=self.__model,
-            messages=[
-                {"role": "system", "content": "Hi, what is the humidity now?"}
-            ],
-            temperature=0
+            messages=messages,
+            temperature=randomness,
         )
 
-        print(response)
-
-# create an instance of the ChatCompletion class with the API key from the .env file
-chat_completion = ChatCompletion(config["OPENAI_API_KEY"])
-
-# call the get_answer method to get a response from the OpenAI model
-chat_completion.get_answer()
+        # Extract and return the content of the response
+        return response["choices"][0]["message"]["content"]
