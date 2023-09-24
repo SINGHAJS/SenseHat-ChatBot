@@ -1,3 +1,6 @@
+# Google API Key
+services/assets/sa_speech_recognition.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
