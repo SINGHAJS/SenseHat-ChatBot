@@ -40,14 +40,18 @@
 
 <code>
     sqlite_handler.insert_into_temp_table(temperature_value: double)
-    sqlite_handler.get_temperature_readings()
-    sqlite_handler.get_temperature_reading_at_time(time: str)
-    sqlite_handler.get_time_reading_at_temperature(temperature: int)
+    sqlite_handler.get_temperature_readings() : list
+    sqlite_handler.get_temperature_reading_at_time(time: str) : list
+    sqlite_handler.get_time_reading_at_temperature(temperature: int) : list
 
     sqlite_handler.insert_into_humidity_table(humidity_value: double)
-    sqlite_handler.get_humidity_readings()
-    sqlite_handler.get_humidity_reading_at_time(time: str)
-    sqlite_handler.get_time_reading_at_humidity(humidity: int)
+    sqlite_handler.get_humidity_readings() : list
+    sqlite_handler.get_humidity_reading_at_time(time: str) : list
+    sqlite_handler.get_time_reading_at_humidity(humidity: int) : list
+
+    sqlite_handler.insert_into_user_table(user_input: str, chatbot_response: str)
+    sqlite_handler.get_user_readings() : list
+    sqlite_handler.get_chatbot_response_from_user_input(user_input: str) : list
 </code>
 
 #5 Terminate the database connection once done
@@ -108,11 +112,11 @@ class SQLiteDatabaseHandler:
         :param temperature: int, temperature
         """
         # Temperature table insertion query
-        sqlite_table_insertion_query = f""" INSERT INTO temperature (Temperature) VALUES ({temperature}) """
+        sqlite_table_insertion_query = f""" INSERT INTO temperature (Temperature) VALUES (?) """
 
         try:
             # Execute table insertion query
-            self.cursor.execute(sqlite_table_insertion_query)
+            self.cursor.execute(sqlite_table_insertion_query, (temperature,))
             self.connection.commit()  # Commit changes to the database
             print(f"[ INSERTED {temperature} INTO TEMPERATURE TABLE ]")
         except SQLite.Error as e:
@@ -207,11 +211,11 @@ class SQLiteDatabaseHandler:
         This function is used to insert a new humidity reading into the humidity table
         """
         # Humidity table insertion query
-        sqlite_table_insertion_query = f""" INSERT INTO humidity (Humidity) VALUES ({humidity}) """
+        sqlite_table_insertion_query = f""" INSERT INTO humidity (Humidity) VALUES (?) """
 
         try:
             # Execute table insertion query
-            self.cursor.execute(sqlite_table_insertion_query)
+            self.cursor.execute(sqlite_table_insertion_query, (humidity,))
             self.connection.commit()  # Commit changes to the database
             print(f"[ INSERTED {humidity} INTO HUMIDITY TABLE ]")
         except SQLite.Error as e:
@@ -281,6 +285,90 @@ class SQLiteDatabaseHandler:
             self.terminate_db_connection()  # Terminate connections
 
         # Return the list of humidity if match, otherwise 'No database entry found!'
+        return result if len(result) > 0 else 'No database entry found!'
+
+    def create_user_table(self):
+        """
+        This function is used to create user table if it does not exist.
+        """
+        sqlite_table_creation_query = """CREATE TABLE IF NOT EXISTS user ( 
+            Id INTEGER PRIMARY KEY, 
+            UserInput TEXT NOT NULL, 
+            ChatBotResponse TEXT NOT NULL,
+            Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )"""  # User table creation query
+
+        try:
+            # Execute the table creation query
+            self.cursor.execute(sqlite_table_creation_query)
+            self.connection.commit()  # Commmit changes to the database
+            print("[ USER TABLE CREATED ]")
+        except SQLite.Error as e:
+            print(f"[DATABASE ERROR: {e}]")
+            self.terminate_db_connection()  # Terminate connections
+
+    def insert_into_user_table(self, user_input, chatbot_response):
+        """
+        This function is used to insert a new user reading into the user table.
+        :param user_input: str, user_input
+        :param chatbot_response: str, chatbot_response
+
+        """
+        # User table insertion query
+        sqlite_table_insertion_query = f""" INSERT INTO user (UserInput, ChatBotResponse) VALUES (?, ?) """
+
+        try:
+            # Execute table insertion query
+            self.cursor.execute(sqlite_table_insertion_query,
+                                (user_input.upper(), chatbot_response.upper()))
+            self.connection.commit()  # Commit changes to the database
+            print(
+                f"[ INSERTED {user_input} and {chatbot_response} INTO USER TABLE ]")
+        except SQLite.Error as e:
+            print(f"[DATABASE ERROR: {e}]")
+            self.terminate_db_connection()  # Terminate connections
+
+    def get_user_readings(self):
+        """
+        This function is used to get the user readings from the user table in the database.
+        Once the results are retrieved, the functions returns the results.
+
+        :return: list of user readings
+        """
+        sqlite_table_get_query = """SELECT * FROM user"""  # User values retrieval query
+
+        try:
+            # Execute table retreival query
+            self.cursor.execute(sqlite_table_get_query)
+            query_response = self.cursor.fetchall()  # Fetch all the results
+            print(query_response)
+        except SQLite.Error as e:
+            print(f"[DATABASE ERROR: {e}]")
+            self.terminate_db_connection()  # Terminate connections
+
+        # Return the user results
+        return query_response if len(query_response) > 0 else 'No data entry avaliable!'
+
+    def get_chatbot_response_from_user_input(self, user_input):
+        """
+        This function is used to get the chatbot response store based on user inputs. 
+        :param user_input: str, user_input
+
+        :return: list of user inputs if match, otherwise 'No database entry found!'
+        """
+        sqlite_table_where_query = """ SELECT ChatbotResponse
+                                       FROM user
+                                       WHERE UserInput = ?"""
+
+        try:
+            query_response = self.cursor.execute(
+                sqlite_table_where_query, (user_input.upper(),))
+            result = query_response.fetchall()
+        except SQLite.Error as e:
+            print(f"[DATABASE ERROR: {e}]")
+            self.terminate_db_connection()  # Terminate connections
+
+        # Return the list of user inputs if match, otherwise 'No database entry found!'
         return result if len(result) > 0 else 'No database entry found!'
 
     def terminate_db_connection(self):
