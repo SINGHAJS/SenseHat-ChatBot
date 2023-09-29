@@ -1,10 +1,11 @@
-# embedded code running
+# embedded code running 
 #################################
 in embedded folder run:
-python3 -m voice-capture.joystick
+
+For main file joystick.py:
+    python3 -m voice-capture.joystick
+
+For file handling:
+    python file_handler/move_old_prompt.py
+
 #################################
-
-Once running we can use the joystick to capture voice.
-
-crtl-c to stop program.
- must use -m as we are importing pixels as a module into joystick file
