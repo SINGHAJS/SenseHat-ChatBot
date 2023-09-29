@@ -1,9 +1,11 @@
+# embedded code running 
+#################################
+in embedded folder run:
 
-No virtual environment implemented yet as I was having issues with wheels and Pillow.
+For main file joystick.py:
+    python3 -m voice-capture.joystick
 
-to run just use python3 <name_of_python_file>
-No arguments implemented at this time.
+For file handling:
+    python file_handler/move_old_prompt.py
 
-Will need to install sense-hat
-EG if using venv/pyvirtual pip install sense-hat
-    if not use sudo apt install sense-hat
+#################################
