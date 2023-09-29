@@ -24,6 +24,7 @@
     firebase_handler.get_multi_temperature_value_at_time() : list
     firebase_handler.get_single_time_value_at_temperature() : str
     firebase_handler.get_multi_time_value_at_temperature() : list
+    firebase_handler.push_local_temprature_date_to_cloud(temperature_data: list)
 
     # Humidity
     firebase_handler.save_humidity(humidity_value: int)
@@ -32,12 +33,14 @@
     firebase_handler.get_multi_humidity_value_at_time() : list
     firebase_handler.get_single_time_value_at_humidity() : str
     firebase_handler.get_multi_time_value_at_humidity() : list
+    firebase_handler.push_local_humidity_date_to_cloud(humidity_data: list)
 
     #User 
     firebase_handler.save_user_interaction(user_input: str, chatbot_response: str)
     firebase_handler.get_all_user_interactions(): list
     firebase_handler.get_single_chatbot_response_from_user_input(user_input: str) : list
     firebase_handler.get_multi_chatbot_response_from_user_input(user_input: str) : list
+    firebase_handler.self.db_local_user_interactions_data_ref(user_interaction_data : list)
 </code>
 
 @Troubleshooting
@@ -47,7 +50,6 @@
 
 import firebase_admin as FireMan
 from firebase_admin import db, credentials
-import time
 from datetime import datetime
 import os
 
@@ -78,6 +80,15 @@ class FirebaseHandler:
 
         self.db_user_ref = self.db_root_ref.child(
             'user-interaction/')  # Reference to the user interaction
+
+        self.db_local_temperature_data_ref = self.db_root_ref.child(
+            'local-temperature-data/')  # Reference to the local temperature data
+
+        self.db_local_humidity_data_ref = self.db_root_ref.child(
+            'local-humidity-data/')  # Reference to the local humidity data
+
+        self.db_local_user_interactions_data_ref = self.db_root_ref.child(
+            'local-user-interaction-data/')  # Reference to the local user interaction data
 
     def save_temperature(self, temperature):
         """
@@ -177,6 +188,24 @@ class FirebaseHandler:
         # Returns the list of timestamp values if the length of the list is greater than 0, otherwise it returns 'No database entry found!'
         return temperature_time_values if len(temperature_time_values) > 0 else 'No database entry found!'
 
+    def push_local_temprature_date_to_cloud(self, temperature_data_list):
+        """
+        This function takes a list of temperature data and pushes this this list of data into the cloud database. It 
+        is intended to be used for push the local database data into the cloud. 
+        :param temperature_data_list: list of temperature data
+        """
+
+        data_list = []
+
+        for item in temperature_data_list:
+            temperature = item[1]
+            timestamp = item[2]
+
+            data_list.append(
+                {'temperature-value': temperature, 'timestamp': timestamp})
+
+        self.db_local_temperature_data_ref.push().set(data_list)
+
     def save_humidity(self, humidity):
         """
         This function is used to save humidity to the Firebase database
@@ -271,6 +300,24 @@ class FirebaseHandler:
         # Returns the list of timestamp values if the length of the list is greater than 0, otherwise it returns 'No database entry found!'
         return humidity_time_values if len(humidity_time_values) > 0 else 'No database entry found!'
 
+    def push_local_humidity_date_to_cloud(self, humidity_data_list):
+        """
+        This function takes a list of humidity data and pushes this this list of data into the cloud database. It 
+        is intended to be used for push the local database data into the cloud. 
+        :param humidity_data_list: list of humidity data
+        """
+
+        data_list = []
+
+        for item in humidity_data_list:
+            humidity = item[1]
+            timestamp = item[2]
+
+            data_list.append(
+                {'humidity-value': humidity, 'timestamp': timestamp})
+
+        self.db_local_humidity_data_ref.push().set(data_list)
+
     def save_user_interaction(self, user_input, chatbot_response):
         """
         This function is used to save the user inputs and the responses it gets from the chatbot. 
@@ -329,3 +376,22 @@ class FirebaseHandler:
 
         # Return the chatbot response if the list size if greater than 0, otherwise, return 'No database entry found!'
         return chatbot_response_list if len(chatbot_response_list) > 0 else 'No database entry found!'
+
+    def push_local_user_interactions_date_to_cloud(self, user_interactions_data):
+        """
+        This function takes a list of user interaction data and pushes this this list of data into the cloud database. It 
+        is intended to be used for push the local database data into the cloud. 
+        :param user_interactions_data: list of user interaction data
+        """
+
+        data_list = []
+
+        for item in user_interactions_data:
+            user_prompt = item[1]
+            chatbot_response = item[2]
+            timestamp = item[3]
+
+            data_list.append(
+                {'user_prompt': user_prompt, 'chatbot_response': chatbot_response, 'timestamp': timestamp})
+
+        self.db_local_user_interactions_data_ref.push().set(data_list)
