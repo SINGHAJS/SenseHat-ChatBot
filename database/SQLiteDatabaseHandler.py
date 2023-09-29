@@ -50,7 +50,7 @@
     sqlite_handler.get_time_reading_at_humidity(humidity: int) : list
 
     sqlite_handler.insert_into_user_table(user_input: str, chatbot_response: str)
-    sqlite_handler.get_user_readings() : list
+    sqlite_handler.get_user_interaction_data() : list
     sqlite_handler.get_chatbot_response_from_user_input(user_input: str) : list
 </code>
 
@@ -328,7 +328,7 @@ class SQLiteDatabaseHandler:
             print(f"[DATABASE ERROR: {e}]")
             self.terminate_db_connection()  # Terminate connections
 
-    def get_user_readings(self):
+    def get_user_interaction_data(self):
         """
         This function is used to get the user readings from the user table in the database.
         Once the results are retrieved, the functions returns the results.
