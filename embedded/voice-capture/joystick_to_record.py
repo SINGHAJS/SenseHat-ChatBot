@@ -5,7 +5,7 @@ import signal  # Import the signal module
 from sense_hat import SenseHat
 
 class AudioRecorder:
-    def __init__(self, device, duration, type, file_prefix="rec", folder="../assets/audio_files"):
+    def __init__(self, device, duration, type, file_prefix="timestamp", folder="../assets/audio_files/current_user_prompt"):
         self.device = device
         self.duration = duration
         self.type = type
@@ -35,13 +35,23 @@ class AudioRecorder:
     def is_recording(self):
         return self.process is not None and self.process.poll() is None
 
-def joystick_event_handler(event, recorder):
+def joystick_event_handler(event, recorder, debounce_time=5):
+    global last_pressed_time
+    current_time = time.time()
+
+    if (current_time - last_pressed_time) < debounce_time:
+        # button bounce
+        return
+    
     if event.action == 'pressed':
+        last_pressed_time= current_time
         recorder.start_recording()
     elif event.action == 'released':
         recorder.stop_recording()
 
 def main():
+    global last_pressed_time
+    last_pressed_time = 0
     sense = SenseHat()
     # Below will depend on which device our mic is
     # run arecord -l to find plughw<n,m>
