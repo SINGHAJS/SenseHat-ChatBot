@@ -1,9 +1,10 @@
+# embedded code running
+#################################
+in embedded folder run:
+python3 -m voice-capture.joystick
+#################################
 
-No virtual environment implemented yet as I was having issues with wheels and Pillow.
+Once running we can use the joystick to capture voice.
 
-to run just use python3 <name_of_python_file>
-No arguments implemented at this time.
-
-Will need to install sense-hat
-EG if using venv/pyvirtual pip install sense-hat
-    if not use sudo apt install sense-hat
+crtl-c to stop program.
+ must use -m as we are importing pixels as a module into joystick file
