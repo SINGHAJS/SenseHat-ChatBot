@@ -1,5 +1,8 @@
-
 from FirebaseHandler import FirebaseHandler
+from SQLiteDatabaseHandler import SQLiteDatabaseHandler
+
+sqlite_handler = SQLiteDatabaseHandler()
+sqlite_handler.establish_db_connection()
 
 firebase_handler = FirebaseHandler()
 
@@ -29,3 +32,13 @@ firebase_handler = FirebaseHandler()
 
 # print(firebase_handler.get_single_chatbot_response_from_user_input('Hello Mac!'))
 # print(firebase_handler.get_multi_chatbot_response_from_user_input('Hello Chatbot!'))
+
+local_temperature_data = sqlite_handler.get_temperature_readings()
+local_humidity_data = sqlite_handler.get_humidity_readings()
+local_user_interaction_data = sqlite_handler.get_user_interaction_data()
+
+firebase_handler.push_local_temprature_date_to_cloud(local_temperature_data)
+# firebase_handler.push_local_humidity_date_to_cloud(local_humidity_data)
+
+# firebase_handler.push_local_user_interactions_date_to_cloud(
+#     local_user_interaction_data)
