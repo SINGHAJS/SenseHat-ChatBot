@@ -1,7 +1,20 @@
 # import necessary libraries
+import os
 import openai
 from dotenv import dotenv_values
 from chat_completion import ChatCompletion
+
+# directory path where your audio files are located
+audio_directory = "sensehat_chatbot/embedded/assets/audio_files/current_user_prompt"
+
+# list all files in the audio directory with the .wav extension
+wav_files = [f for f in os.listdir(audio_directory) if f.endswith(".wav")]
+
+# file validation
+if wav_files:
+    audio_file = os.path.join(audio_directory, wav_files[0])
+else:
+    print("No .wav files found in the 'audio' directory.")
 
 # example data from Ajit's database
 current_temperature = 24
@@ -25,8 +38,8 @@ credentials_path = "assets/sa_speech_recognition.json"
 # create a SpeechToText instance with the specified credentials
 speech_to_text = SpeechToText(credentials_path=credentials_path)
 
-# specify the path to the audio file to be transcribed
-audio_file = "assets/audio/capitality_of_indonesia.wav"
+# # specify the path to the audio file to be transcribed
+# audio_file = "assets/audio/capitality_of_indonesia.wav"
 
 # transcribe the audio file and store the result
 result = speech_to_text.transcribe(file_path=audio_file)
