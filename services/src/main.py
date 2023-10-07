@@ -1,85 +1,61 @@
-# import necessary libraries
 import os
 import openai
 from dotenv import dotenv_values
 from chat_completion import ChatCompletion
-
-# directory path where your audio files are located
-audio_directory = "sensehat_chatbot/embedded/assets/audio_files/current_user_prompt"
-
-# list all files in the audio directory with the .wav extension
-wav_files = [f for f in os.listdir(audio_directory) if f.endswith(".wav")]
-
-# file validation
-if wav_files:
-    audio_file = os.path.join(audio_directory, wav_files[0])
-else:
-    print("No .wav files found in the 'audio' directory.")
-
-# example data from Ajit's database
-current_temperature = 24
-current_humidity = 70
-
-# load API key from the .env file
-config = dotenv_values(".env")
-
-# set the OpenAI API key using the loaded value
-openai.api_key = config["OPENAI_API_KEY"]
-
-# create a ChatCompletion instance
-chat_completion = ChatCompletion(openai, config["CHAT_COMPLETION_MODEL"])
-
-# import the SpeechToText class
 from speech_to_text import SpeechToText
 
-# define the path to the Google Cloud Speech Recognition credentials
-credentials_path = "assets/sa_speech_recognition.json"
+# CONSTANTS
+AUDIO_DIRECTORY = "../../embedded/assets/audio_files/current_user_prompt"
+CREDENTIALS_PATH = "../../credentials/chatbotproject-401307-d4e1b394c4f5.json"
+CURRENT_TEMPERATURE = 24
+CURRENT_HUMIDITY = 70
+KEYWORDS_TEMPERATURE = ["temperature", "room"]
+KEYWORDS_HUMIDITY = ["humidity", "room"]
 
-# create a SpeechToText instance with the specified credentials
-speech_to_text = SpeechToText(credentials_path=credentials_path)
+# Configuration
+config = dotenv_values(".env")
+openai.api_key = config.get("OPENAI_API_KEY")
 
-# # specify the path to the audio file to be transcribed
-# audio_file = "assets/audio/capitality_of_indonesia.wav"
+def get_audio_file(directory):
+    """Retrieve the first WAV file from a directory."""
+    wav_files = [f for f in os.listdir(directory) if f.endswith(".wav")]
 
-# transcribe the audio file and store the result
-result = speech_to_text.transcribe(file_path=audio_file)
+    if not wav_files:
+        print("No .wav files found in the 'audio' directory.")
+        return None
 
-# print the transcribed text
-print(f"Prompt: {result}")
+    return os.path.join(directory, wav_files[0])
 
-# define keywords related to temperature and humidity
-keywords_temperature = [
-    "temperature",
-    "room",
-]
-
-keywords_humidity = [
-    "humidity",
-    "room",
-]
-
-# define a function to check if input text contains specified keywords
 def has_keywords(input_text, keywords):
-    input_text = input_text.lower()
-    splitted = input_text.split(" ")
+    """Check if input text contains all specified keywords."""
+    input_text = input_text.lower().split()
 
-    for word in splitted:
-        if word in keywords:
-            keywords.remove(word)
-    
-    return (len(keywords) == 0)
+    return all(word in input_text for word in keywords)
 
-answer = None
-# check if the transcribed text contains keywords related to temperature or humidity
-if has_keywords(result, keywords_temperature):
-    print(f"Answer: Current temperature in the room is {current_temperature}")
-elif has_keywords(result, keywords_humidity):
-    print(f"Answer: Current humidity in the room is {current_humidity}")
-else:
-    # obtain an answer using the ChatCompletion instance
-    answer = chat_completion.get_answer(result,[
-        "Keep every answer short and concise." # make the answer short and concise
-    ])
+def main():
+    # Initialization
+    chat_completion = ChatCompletion(openai, "gpt-3.5-turbo")
+    speech_to_text = SpeechToText(credentials_path=CREDENTIALS_PATH)
+    audio_file = get_audio_file(AUDIO_DIRECTORY)
 
-    # print the generated answer
-    print(f"Answer: {answer}")
+    if not audio_file:
+        return
+
+    # Transcription
+    result = speech_to_text.transcribe(file_path=audio_file)
+    print(f"Prompt: {result}")
+
+    # Keyword Matching
+    if has_keywords(result, KEYWORDS_TEMPERATURE):
+        print(f"Answer: Current temperature in the room is {CURRENT_TEMPERATURE}")
+    elif has_keywords(result, KEYWORDS_HUMIDITY):
+        print(f"Answer: Current humidity in the room is {CURRENT_HUMIDITY}")
+    else:
+        # Chat completion
+        answer = chat_completion.get_answer(result, [
+            "Keep every answer short and concise." # Guideline for the model
+        ])
+        print(f"Answer: {answer}")
+
+if __name__ == "__main__":
+    main()
