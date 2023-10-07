@@ -1,61 +1,73 @@
 import os
 import openai
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 from chat_completion import ChatCompletion
 from speech_to_text import SpeechToText
 
-# CONSTANTS
-AUDIO_DIRECTORY = "../../embedded/assets/audio_files/current_user_prompt"
-CREDENTIALS_PATH = "../../credentials/chatbotproject-401307-d4e1b394c4f5.json"
-CURRENT_TEMPERATURE = 24
-CURRENT_HUMIDITY = 70
-KEYWORDS_TEMPERATURE = ["temperature", "room"]
-KEYWORDS_HUMIDITY = ["humidity", "room"]
+class ChatbotAssistant:
+    AUDIO_DIRECTORY = "../../embedded/assets/audio_files/current_user_prompt"
+    CREDENTIALS_PATH = "../../credentials/chatbotproject-401307-d4e1b394c4f5.json"
+    CURRENT_TEMPERATURE = 24
+    CURRENT_HUMIDITY = 70
+    KEYWORDS_TEMPERATURE = ["temperature", "room"]
+    KEYWORDS_HUMIDITY = ["humidity", "room"]
 
-# Configuration
-config = dotenv_values(".env")
-openai.api_key = config.get("OPENAI_API_KEY")
+    def __init__(self):
+        # Load API keys and configurations
+        load_dotenv()
+        openai.api_key = os.environ["OPENAI_API_KEY"]
+        self.chat_completion = ChatCompletion(openai, "gpt-3.5-turbo")
+        self.speech_to_text = SpeechToText(credentials_path=self.CREDENTIALS_PATH)
 
-def get_audio_file(directory):
-    """Retrieve the first WAV file from a directory."""
-    wav_files = [f for f in os.listdir(directory) if f.endswith(".wav")]
+    def _get_audio_file(self):
+        """Retrieve the first WAV file from a directory."""
+        try:
+            wav_files = [f for f in os.listdir(self.AUDIO_DIRECTORY) if f.endswith(".wav")]
 
-    if not wav_files:
-        print("No .wav files found in the 'audio' directory.")
-        return None
+            if not wav_files:
+                print("No .wav files found in the 'audio' directory.")
+                return None
 
-    return os.path.join(directory, wav_files[0])
+            return os.path.join(self.AUDIO_DIRECTORY, wav_files[0])
+        except Exception as e:
+            print(f"Error accessing audio directory: {e}")
+            return None
 
-def has_keywords(input_text, keywords):
-    """Check if input text contains all specified keywords."""
-    input_text = input_text.lower().split()
+    def _has_keywords(self, input_text, keywords):
+        """Check if input text contains all specified keywords."""
+        input_text = input_text.lower().split()
+        return all(word in input_text for word in keywords)
 
-    return all(word in input_text for word in keywords)
+    def run(self):
+        audio_file = self._get_audio_file()
 
-def main():
-    # Initialization
-    chat_completion = ChatCompletion(openai, "gpt-3.5-turbo")
-    speech_to_text = SpeechToText(credentials_path=CREDENTIALS_PATH)
-    audio_file = get_audio_file(AUDIO_DIRECTORY)
+        if not audio_file:
+            return
 
-    if not audio_file:
-        return
+        try:
+            result = self.speech_to_text.transcribe(file_path=audio_file)
+            if not result:
+                print("There is no speech in the audio file.")
+                return
 
-    # Transcription
-    result = speech_to_text.transcribe(file_path=audio_file)
-    print(f"Prompt: {result}")
+            print(f"Prompt: {result}")
+        except Exception as e:
+            print(f"Error during transcription: {e}")
+            return
 
-    # Keyword Matching
-    if has_keywords(result, KEYWORDS_TEMPERATURE):
-        print(f"Answer: Current temperature in the room is {CURRENT_TEMPERATURE}")
-    elif has_keywords(result, KEYWORDS_HUMIDITY):
-        print(f"Answer: Current humidity in the room is {CURRENT_HUMIDITY}")
-    else:
-        # Chat completion
-        answer = chat_completion.get_answer(result, [
-            "Keep every answer short and concise." # Guideline for the model
-        ])
-        print(f"Answer: {answer}")
+        if self._has_keywords(result, self.KEYWORDS_TEMPERATURE):
+            print(f"Answer: Current temperature in the room is {self.CURRENT_TEMPERATURE}")
+        elif self._has_keywords(result, self.KEYWORDS_HUMIDITY):
+            print(f"Answer: Current humidity in the room is {self.CURRENT_HUMIDITY}")
+        else:
+            try:
+                answer = self.chat_completion.get_answer(result, [
+                    "Keep every answer short and concise."
+                ])
+                print(f"Answer: {answer}")
+            except Exception as e:
+                print(f"Error obtaining chat completion: {e}")
 
 if __name__ == "__main__":
-    main()
+    assistant = ChatbotAssistant()
+    assistant.run()

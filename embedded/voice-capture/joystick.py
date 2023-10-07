@@ -1,12 +1,10 @@
-# main.py
-
+#joystick.py
 import os
 import wave
 import pyaudio
 import time
 from sense_hat import SenseHat
 from senseHat_pixels.pixel_handler import PixelManager
-
 
 class AudioRecorder:
     FORMAT = pyaudio.paInt16

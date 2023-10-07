@@ -1,4 +1,4 @@
-# senseHat_pixels/pixel_handler.py
+# pixel_handler.py
 
 from sense_hat import SenseHat
 import threading
