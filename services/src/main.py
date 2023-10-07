@@ -53,7 +53,7 @@ class ChatBot:
         elif self.has_keywords(result, keywords_humidity[:]):
             answer = f"Current humidity in the room is {self.current_humidity}"
         else:
-            answer = self.chat_completion.get_answer(result, ["Keep every answer to between 8 and 12 words."])
+            answer = self.chat_completion.get_answer(result, ["make the answers atleast 5 words."])
 
         print(f"Answer: {answer}")
         self.write_response_to_file(answer)
