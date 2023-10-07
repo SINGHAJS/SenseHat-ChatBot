@@ -1,3 +1,5 @@
+# main.py
+
 import os
 import wave
 import pyaudio
@@ -7,13 +9,12 @@ from senseHat_pixels.pixel_handler import PixelManager
 
 
 class AudioRecorder:
-
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
     RATE = 44100
     CHUNK = 1024
     DURATION = 6
-    FOLDER = "assets/audio_files/current_user_prompt"
+    FOLDER = "/home/s13/projects/sensehat_chatbot/embedded/assets/audio_files/current_user_prompt"
     FILENAME = "timestamp_{time}.wav"
 
     def __init__(self, pixel_manager):
@@ -56,19 +57,23 @@ def main():
     audio_recorder = AudioRecorder(pixel_manager)
     
     print("Ready for voice input!")
+    pixel_manager.start_displaying_message()
+    
     try:
         is_recording = False
         while True:
             for event in sense.stick.get_events():
                 if event.action == 'pressed' and not is_recording:
+                    pixel_manager.stop_displaying_message()
                     is_recording = True
                     audio_recorder.record_audio()
                     sense.stick.get_events()
                     is_recording = False
                     print("Ready for voice input!")
+                    pixel_manager.start_displaying_message()
     except KeyboardInterrupt:
+        pixel_manager.stop_displaying_message()
         print("Exiting...")
-
 
 if __name__ == "__main__":
     main()
