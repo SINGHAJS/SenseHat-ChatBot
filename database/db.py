@@ -1,4 +1,4 @@
-from SQLiteDatabaseHandler import SQLiteDatabaseHandler
+from database.local_database.SQLiteDatabaseHandler import SQLiteDatabaseHandler
 
 sqlite_handler = SQLiteDatabaseHandler()
 sqlite_handler.establish_db_connection()
@@ -25,7 +25,7 @@ sqlite_handler.establish_db_connection()
 # Test - User Table
 # sqlite_handler.create_user_table()
 # sqlite_handler.insert_into_user_table('Hello world', 'Hello user')
-# sqlite_handler.get_user_readings()
+sqlite_handler.get_user_interaction_data()
 # print(sqlite_handler.get_chatbot_response_from_user_input('Hello someone'))
 
 sqlite_handler.terminate_db_connection()

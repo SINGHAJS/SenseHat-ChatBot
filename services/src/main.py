@@ -3,6 +3,8 @@ import openai
 from dotenv import load_dotenv
 from chat_completion import ChatCompletion
 from speech_to_text import SpeechToText
+from ...database.local_database.SQLiteDatabaseHandler import SQLiteDatabaseHandler
+
 
 class ChatBot:
     
@@ -11,6 +13,9 @@ class ChatBot:
         self.wav_files = [f for f in os.listdir(self.audio_directory) if f.endswith(".wav")]
         self.current_temperature = 24
         self.current_humidity = 70
+        self.db = SQLiteDatabaseHandler()
+        self.db.establish_db_connection()
+        self.db.create_user_table()
         load_dotenv()
         openai.api_key = os.environ["OPENAI_API_KEY"]
         self.chat_completion = ChatCompletion(openai, "gpt-3.5-turbo")
@@ -50,13 +55,24 @@ class ChatBot:
         answer = None
         if self.has_keywords(result, keywords_temperature[:]):
             answer = f"Current temperature in the room is {self.current_temperature}"
+
         elif self.has_keywords(result, keywords_humidity[:]):
             answer = f"Current humidity in the room is {self.current_humidity}"
         else:
             answer = self.chat_completion.get_answer(result, ["make the answers atleast 5 words."])
 
         print(f"Answer: {answer}")
+        self.db.insert_into_user_table(result, answer)
         self.write_response_to_file(answer)
+        
+
+        
+        
+        # keyword -> 2 
+                        # string cuurent temp in room is + self.current_temp" (string ,string)
+        # keywords < 2
+                        # open ai to get reponse
+        
 
 
 if __name__ == "__main__":
