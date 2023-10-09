@@ -1,5 +1,5 @@
 from FirebaseHandler import FirebaseHandler
-from SQLiteDatabaseHandler import SQLiteDatabaseHandler
+from database.local_database.SQLiteDatabaseHandler import SQLiteDatabaseHandler
 
 sqlite_handler = SQLiteDatabaseHandler()
 sqlite_handler.establish_db_connection()
