@@ -1,2 +1,8 @@
 sudo apt-get install portaudio19-dev
 pip3 install pyaudio --no-cache-dir
+
+
+must go into .venv/lib/python3.9/site-packages/
+then:
+    ln -s /usr/lib/python3/dist-packages/RTIMULib-7.2.1.egg-info .
+    ln -s /usr/lib/python3/dist-packages/RTIMU.cpython-39-arm-linux-gnueabihf.so .

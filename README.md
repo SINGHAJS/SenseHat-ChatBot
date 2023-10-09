@@ -13,3 +13,12 @@ yet to do- implement database interaction into services.
 			Implement theads to handle everything
 
 I made deployment branch because I have a lot of services code and dont want to merge to main.
+
+=====run from root folder===== eg sense_hat:
+	to run services
+		python3 -m services.src.main
+	to run embedded and services together with db and old audio handling
+		python3 -m embedded.voice-capture.joystick
+
+
+
