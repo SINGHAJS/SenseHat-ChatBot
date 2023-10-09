@@ -59,7 +59,7 @@ class ChatBot:
         elif self.has_keywords(result, keywords_humidity[:]):
             answer = f"Current humidity in the room is {self.current_humidity}"
         else:
-            answer = self.chat_completion.get_answer(result, ["make the answers atleast 5 words."])
+            answer = self.chat_completion.get_answer(result, ["make the answers short."])
 
         print(f"Answer: {answer}")
         self.db.insert_into_user_table(result, answer)
