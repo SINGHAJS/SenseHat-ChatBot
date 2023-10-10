@@ -1,3 +1,4 @@
+# move_old_prompt.py
 import os
 
 source = '/home/s13/projects/sensehat_chatbot/embedded/assets/audio_files/current_user_prompt'

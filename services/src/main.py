@@ -1,85 +1,71 @@
-# import necessary libraries
 import os
 import openai
-from dotenv import dotenv_values
-from chat_completion import ChatCompletion
+from dotenv import load_dotenv
+from services.src.chat_completion import ChatCompletion
+from services.src.speech_to_text import SpeechToText
+from database.local_database import SQLiteDatabaseHandler
 
-# directory path where your audio files are located
-audio_directory = "sensehat_chatbot/embedded/assets/audio_files/current_user_prompt"
 
-# list all files in the audio directory with the .wav extension
-wav_files = [f for f in os.listdir(audio_directory) if f.endswith(".wav")]
-
-# file validation
-if wav_files:
-    audio_file = os.path.join(audio_directory, wav_files[0])
-else:
-    print("No .wav files found in the 'audio' directory.")
-
-# example data from Ajit's database
-current_temperature = 24
-current_humidity = 70
-
-# load API key from the .env file
-config = dotenv_values(".env")
-
-# set the OpenAI API key using the loaded value
-openai.api_key = config["OPENAI_API_KEY"]
-
-# create a ChatCompletion instance
-chat_completion = ChatCompletion(openai, config["CHAT_COMPLETION_MODEL"])
-
-# import the SpeechToText class
-from speech_to_text import SpeechToText
-
-# define the path to the Google Cloud Speech Recognition credentials
-credentials_path = "assets/sa_speech_recognition.json"
-
-# create a SpeechToText instance with the specified credentials
-speech_to_text = SpeechToText(credentials_path=credentials_path)
-
-# # specify the path to the audio file to be transcribed
-# audio_file = "assets/audio/capitality_of_indonesia.wav"
-
-# transcribe the audio file and store the result
-result = speech_to_text.transcribe(file_path=audio_file)
-
-# print the transcribed text
-print(f"Prompt: {result}")
-
-# define keywords related to temperature and humidity
-keywords_temperature = [
-    "temperature",
-    "room",
-]
-
-keywords_humidity = [
-    "humidity",
-    "room",
-]
-
-# define a function to check if input text contains specified keywords
-def has_keywords(input_text, keywords):
-    input_text = input_text.lower()
-    splitted = input_text.split(" ")
-
-    for word in splitted:
-        if word in keywords:
-            keywords.remove(word)
+class ChatBot:
     
-    return (len(keywords) == 0)
+    def __init__(self):
+        self.audio_directory = "/home/s13/projects/sensehat_chatbot/embedded/assets/audio_files/current_user_prompt"
+        self.wav_files = [f for f in os.listdir(self.audio_directory) if f.endswith(".wav")]
+        self.current_temperature = 24
+        self.current_humidity = 70
+        self.db = SQLiteDatabaseHandler.SQLiteDatabaseHandler()
+        self.db.establish_db_connection()
+        self.db.create_user_table()
+        load_dotenv()
+        openai.api_key = os.environ["OPENAI_API_KEY"]
+        self.chat_completion = ChatCompletion(openai, "gpt-3.5-turbo")
+        self.credentials_path = "/home/s13/projects/sensehat_chatbot/credentials/chatbotproject-401307-d4e1b394c4f5.json"
+        self.speech_to_text = SpeechToText(credentials_path=self.credentials_path)
+        self.responses_file = "/home/s13/projects/sensehat_chatbot/embedded/assets/responses/responses.txt"
 
-answer = None
-# check if the transcribed text contains keywords related to temperature or humidity
-if has_keywords(result, keywords_temperature):
-    print(f"Answer: Current temperature in the room is {current_temperature}")
-elif has_keywords(result, keywords_humidity):
-    print(f"Answer: Current humidity in the room is {current_humidity}")
-else:
-    # obtain an answer using the ChatCompletion instance
-    answer = chat_completion.get_answer(result,[
-        "Keep every answer short and concise." # make the answer short and concise
-    ])
+    def write_response_to_file(self, response_text):
+        with open(self.responses_file, 'w') as file:
+            file.write(response_text)
 
-    # print the generated answer
-    print(f"Answer: {answer}")
+    def has_keywords(self, input_text, keywords):
+        input_text = input_text.lower()
+        splitted = input_text.split(" ")
+        for word in splitted:
+            if word in keywords:
+                keywords.remove(word)
+        return (len(keywords) == 0)
+
+    def run(self):
+        if not self.wav_files:
+            print("No .wav files found in the 'audio' directory.")
+            return
+
+        audio_file = os.path.join(self.audio_directory, self.wav_files[0])
+        result = self.speech_to_text.transcribe(file_path=audio_file)
+        
+        if not result:
+            print("No speech detected in the audio file.")
+            return
+
+        print(f"Prompt: {result}")
+
+        keywords_temperature = ["temperature", "room"]
+        keywords_humidity = ["humidity", "room"]
+
+        answer = None
+        if self.has_keywords(result, keywords_temperature[:]):
+            answer = f"Current temperature in the room is {self.current_temperature}"
+
+        elif self.has_keywords(result, keywords_humidity[:]):
+            answer = f"Current humidity in the room is {self.current_humidity}"
+        else:
+            answer = self.chat_completion.get_answer(result, ["make the answers short."])
+
+        print(f"Answer: {answer}")
+        self.db.insert_into_user_table(result, answer)
+        self.write_response_to_file(answer)
+    
+
+if __name__ == "__main__":
+    bot = ChatBot()
+    bot.run()

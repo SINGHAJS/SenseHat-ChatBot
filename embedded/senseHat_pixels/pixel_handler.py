@@ -1,4 +1,4 @@
-# senseHat_pixels/pixel_handler.py
+# pixel_handler.py
 
 from sense_hat import SenseHat
 import threading
@@ -24,7 +24,7 @@ class PixelManager:
         while self.running:
             with open(file_path, 'r') as f:
                 message = f.read().strip()
-                self.sense.show_message(message, scroll_speed=0.05, text_colour=BLUE)
+                self.sense.show_message(message, scroll_speed=0.04, text_colour=BLUE)
 
     def start_displaying_message(self):
         self.running = True
