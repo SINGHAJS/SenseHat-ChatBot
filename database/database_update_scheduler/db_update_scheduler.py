@@ -1,5 +1,5 @@
-from CloudDatabaseUpdateScheduler import CloudDatabaseUpdateScheduler
-from FirebaseHandler import FirebaseHandler
+from database.database_update_scheduler.CloudDatabaseUpdateScheduler import CloudDatabaseUpdateScheduler
+from database.cloud_database.FirebaseHandler import FirebaseHandler
 from database.local_database.SQLiteDatabaseHandler import SQLiteDatabaseHandler
 
 sqlite_handler = SQLiteDatabaseHandler()
