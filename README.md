@@ -6,3 +6,19 @@ We will squash commits to reduce keep a cleaner history on main.
 Branch creation structure
 	<first-letter-name_6-letters-last-name>_<trello-id>_<description-of-feature>
 	Example: ohettiar_#04_embedded-database
+
+
+deployment branch is current and is working. 
+yet to do- implement database interaction into services.
+			Implement theads to handle everything
+
+I made deployment branch because I have a lot of services code and dont want to merge to main.
+
+=====run from root folder===== eg sense_hat:
+	to run services
+		python3 -m services.src.main
+	to run embedded and services together with db and old audio handling
+		python3 -m embedded.voice-capture.joystick
+
+
+
