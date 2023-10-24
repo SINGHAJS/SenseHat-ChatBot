@@ -1,4 +1,4 @@
-# Gas Detection Alarm System
+# SenseHat ChatBot
 The SenseHat ChatBot is a system that poses as a device to assist the user answer questions related to reading environmental data (temperature, humidity) and answering general knowledge questions. Additionally, it stores sensory, user prompt, and chatbot response data locally using SQLite that is then pushed to the Firebase database with a scheduler called Crontab. 
 
 ## Table of Contents
